@@ -9,6 +9,8 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./version-management.nix
+      ./bluetooth.nix
+      ./graphics.nix
     ];
 
   # Bootloader.
@@ -128,7 +130,7 @@
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
      git
-     htop
+     btop
      neovim
   ];
   environment.variables = {

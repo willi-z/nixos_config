@@ -24,6 +24,20 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
+  # Steam library on NVMe #2
+  fileSystems."/games" = {
+    device = "/dev/disk/by-label/games";
+    fsType = "ext4";
+    options = [ "nofail" ];    # allow boot even if drive absent
+  };
+
+  # Backup mirror on SATA
+  fileSystems."/mnt/backup" = {
+    device = "/dev/disk/by-label/backup";
+    fsType = "ext4";
+    options = [ "nofail" ];
+  };
+
   swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -35,17 +49,4 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  
-  hardware.bluetooth.enable = true; # enables support for Bluetooth
-  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
-  # hardware.pulseaudio.enable = true; # To allow Bluetooth audio devices to be used with PulseAudio
-
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
-  hardware.graphics.extraPackages = with pkgs; [ 
-   rocmPackages.clr.icd
-   amdvlk    
-  ];
 }
