@@ -11,6 +11,7 @@
       ./version-management.nix
       ./bluetooth.nix
       ./graphics.nix
+      ./backup.nix
     ];
 
   # Bootloader.
