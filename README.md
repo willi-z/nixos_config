@@ -4,3 +4,7 @@
 ```sh
 nixos-rebuild switch --upgrade
 ```
+
+```sh
+nix-collect-garbage -d
+```

@@ -11,12 +11,16 @@
       ./version-management.nix
       ./bluetooth.nix
       ./graphics.nix
+      ./docker.nix
       ./backup.nix
     ];
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelModules = [ "uinput" ];
   # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "nixos"; # Define your hostname.
@@ -68,7 +72,6 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -80,9 +83,13 @@
 
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
-    #media-session.enable = true;
+    wireplumber.enable = true;
   };
-  
+
+  services.udev.extraRules = ''
+    KERNEL=="uinput", MODE="0660", GROUP="input"
+  '';
+
 
   systemd.tmpfiles.rules = 
   let
@@ -105,7 +112,12 @@
   users.users.williz = {
     isNormalUser = true;
     description = "Willi Zschiebsch";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ 
+      "networkmanager" 
+      "wheel" 
+      "docker" 
+      "dialout" "input" # for opentrack
+    ];
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
@@ -116,6 +128,12 @@
       discord
       inkscape
       krita
+
+      nextcloud-client      
+      # lutris
+      # wine
+      opentrack
+      # protonup-qt
     ];
   };
 
@@ -130,14 +148,31 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-     git
-     btop
-     neovim
+    git
+    direnv
+    btop
+    neovim
+
+    libreoffice-qt-fresh
+    hyphen
+    hyphenDicts.de_DE
+    hunspell
+    hunspellDicts.en_US
+    hunspellDicts.de_DE
+
+    thunderbird-latest
+
+    # for SteamTinkerLauncher
+    unzip
+    wget
+    # xdotool
+    # xxd
+    # xorg.xwininfo
+    # yad
   ];
   environment.variables = {
-  #  DRI_PRIME = "pci-0000_03_00_0";
+    #
   };
-
   
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -146,6 +181,11 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+
+  # requried to make uv work
+  # https://www.crescentro.se/posts/python-nixos/
+  programs.nix-ld.enable = true;
+
 
   # List services that you want to enable:
 
