@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./version-management.nix
+      ./fonts.nix
       ./bluetooth.nix
       ./graphics.nix
       ./docker.nix
